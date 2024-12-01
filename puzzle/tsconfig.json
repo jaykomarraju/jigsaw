@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2020",                    // Updated from es5 for modern features
     "lib": [
       "dom",
       "dom.iterable",
@@ -14,13 +14,24 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",         // Changed from "node" to "bundler"
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "src",                      // Added to enable absolute imports
+    "paths": {                             // Added for better import management
+      "@/*": ["*"]
+    },
+    "noUnusedLocals": true,               // Added to catch unused variables
+    "noUnusedParameters": true,            // Added to catch unused parameters
   },
   "include": [
-    "src"
+    "src/**/*"                            // Updated to explicitly include all files under src
+  ],
+  "exclude": [                            // Added exclude section
+    "node_modules",
+    "build",
+    "dist"
   ]
 }

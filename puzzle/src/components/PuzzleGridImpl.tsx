@@ -12,13 +12,15 @@ export interface PiecePosition {
   image: HTMLImageElement;
 }
 
-export interface PuzzleGridProps {}
+export interface PuzzleGridImplProps {
+  imageSrc: string;
+}
 
 const GRID_SIZE = 4;
 const CANVAS_SIZE = 600;
 const PIECE_SIZE = CANVAS_SIZE / GRID_SIZE;
 
-const PuzzleGrid: React.FC<PuzzleGridProps> = () => {
+const PuzzleGridImpl: React.FC<PuzzleGridImplProps> = ({ imageSrc }) => {
   const { state, dispatch } = usePuzzle();
   const [pieces, setPieces] = useState<PiecePosition[]>([]);
   const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
@@ -48,7 +50,8 @@ const PuzzleGrid: React.FC<PuzzleGridProps> = () => {
             pieceHeight
           );
           
-          const pieceImage = document.createElement('img');
+          const pieceImage = new Image();
+          pieceImage.crossOrigin = 'anonymous';  // Add crossOrigin here too
           pieceImage.src = canvas.toDataURL();
           
           pieces.push({
@@ -66,16 +69,17 @@ const PuzzleGrid: React.FC<PuzzleGridProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (state.originalImage) {
-      const image = document.createElement('img');
-      image.src = state.originalImage;
+    if (imageSrc) {
+      const image = new Image();
+      image.crossOrigin = 'anonymous';  // Add crossOrigin attribute
+      image.src = imageSrc;
       image.onload = () => {
         const newPieces = createPuzzlePieces(image);
         setPieces(newPieces);
         dispatch({ type: 'START_GAME' });
       };
     }
-  }, [state.originalImage, createPuzzlePieces, dispatch]);
+  }, [imageSrc, createPuzzlePieces, dispatch]);
 
   const handleDragStart = (pieceId: number) => {
     setSelectedPiece(pieceId);
@@ -126,7 +130,7 @@ const PuzzleGrid: React.FC<PuzzleGridProps> = () => {
     dispatch({ type: 'START_GAME' });
   };
 
-  if (!state.originalImage) {
+  if (!imageSrc) {
     return null;
   }
 
@@ -135,7 +139,6 @@ const PuzzleGrid: React.FC<PuzzleGridProps> = () => {
       <Button
         variant="contained"
         onClick={shufflePieces}
-       
         sx={{
           mb: 2,
           display: 'inline-flex',
@@ -185,4 +188,4 @@ const PuzzleGrid: React.FC<PuzzleGridProps> = () => {
   );
 };
 
-export default PuzzleGrid;
+export default PuzzleGridImpl;
